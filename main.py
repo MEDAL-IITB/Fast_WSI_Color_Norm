@@ -1,4 +1,6 @@
-# Please cite below paper if you use this code: 
+# Please cite both papers if you use this code: 
+
+
 
 # @inproceedings{Vahadane2015ISBI,
 # 	Author = {Abhishek Vahadane and Tingying Peng and Shadi Albarqouni and Maximilian Baust and Katja Steiger and Anna Melissa Schlitter and Amit Sethi and Irene Esposito and Nassir Navab},
@@ -7,9 +9,8 @@
 # 	Title = {Structure-Preserved Color Normalization for Histological Images},
 # 	Year = {2015}}
 
-# Contact: vahadane@iitg.ernet.in, abhishek.vahadane@gmail.com
 # input image should be color image
-# Python implementation by: Goutham Ramakrishnan, goutham7r@gmail.com
+# Python implementation by: Goutham Ramakrishnan, goutham7r@gmail.com and Deepak Anand, deepakanandece@gmail.com
 
 import glob
 import sys
