@@ -1,5 +1,16 @@
 # Please cite both papers if you use this code: 
-
+# @article{ramakrishnan_fast_2019,
+# 	title = {Fast {GPU}-{Enabled} {Color} {Normalization} for {Digital} {Pathology}},
+# 	url = {http://arxiv.org/abs/1901.03088},
+# 	urldate = {2019-01-11},
+# 	journal = {arXiv:1901.03088 [cs]},
+# 	author = {Ramakrishnan, Goutham and Anand, Deepak and Sethi, Amit},
+# 	month = jan,
+# 	year = {2019},
+# 	note = {arXiv: 1901.03088},
+# 	keywords = {Computer Science - Computer Vision and Pattern Recognition},
+# 	file = {arXiv\:1901.03088 PDF:/home/deepakanand/Zotero/storage/PBAERTSZ/Ramakrishnan et al. - 2019 - Fast GPU-Enabled Color Normalization for Digital P.pdf:application/pdf;arXiv.org Snapshot:/home/deepakanand/Zotero/storage/FH5SW7R3/1901.html:text/html}
+# }
 
 
 # @inproceedings{Vahadane2015ISBI,
