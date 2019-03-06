@@ -288,7 +288,7 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 			print "Saving normalized image..."
 			#cv2.imwrite(s,cv2.cvtColor(sourcenorm, cv2.COLOR_RGB2BGR))
 			pyimg = numpy2vips(sourcenorm)
-			pyimg.tiffsave(s, tile=True, compression='jpeg', bigtiff=True,pyramid=True,Q=85)
+			pyimg.tiffsave(s, tile=True, compression='lzw',xres=20000,yres=20000, bigtiff=True,pyramid=True,Q=100)
 			del sourcenorm
 			print "File written to:",s
 			print "\t \t \t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3)
