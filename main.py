@@ -35,7 +35,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 
 #to use cpu instead of gpu, uncomment the below line
 os.environ['CUDA_VISIBLE_DEVICES'] = '1' #use only GPU-0
-os.environ['CUDA_VISIBLE_DEVICES'] = '' #use only CPU
+#os.environ['CUDA_VISIBLE_DEVICES'] = '' #use only CPU
 
 import tensorflow as tf
 gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=1)
