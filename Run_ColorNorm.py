@@ -3,7 +3,7 @@ import time
 import os
 import cv2
 import openslide
-
+import pyvips
 from PIL import Image
 Image.MAX_IMAGE_PIXELS = None
 
@@ -12,7 +12,41 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 
 from Estimate_W import Wfast
 
+#################################3
+format_to_dtype = {
+    'uchar': np.uint8,
+    'char': np.int8,
+    'ushort': np.uint16,
+    'short': np.int16,
+    'uint': np.uint32,
+    'int': np.int32,
+    'float': np.float32,
+    'double': np.float64,
+    'complex': np.complex64,
+    'dpcomplex': np.complex128,
+}
 
+# map np dtypes to vips
+dtype_to_format = {
+    'uint8': 'uchar',
+    'int8': 'char',
+    'uint16': 'ushort',
+    'int16': 'short',
+    'uint32': 'uint',
+    'int32': 'int',
+    'float32': 'float',
+    'float64': 'double',
+    'complex64': 'complex',
+    'complex128': 'dpcomplex',
+}
+
+def numpy2vips(a):
+    height, width, bands = a.shape
+    linear = a.reshape(width * height * bands)
+    vi = pyvips.Image.new_from_memory(linear.data, width, height, bands,
+                                      dtype_to_format[str(a.dtype)])
+    return vi
+################################
 def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background_correction=True,config=None):	
 
 	if config is None:
@@ -61,8 +95,8 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 		base_s=os.path.basename(filename)     #source.svs
 		fname_s=os.path.splitext(base_s)[0]	  #source
 		f_form = os.path.splitext(base_s)[1]  #.svs
-		s=output_direc+base_s.replace(".", "_")+" (using "+base_t.replace(".", "_")+" "+correc+").png"
-		# s=output_direc+base_s.replace(".", "_")+" (no-norm using "+base_t.replace(".", "_")+").png"
+		#s=output_direc+base_s.replace(".", "_")+" (using "+base_t.replace(".", "_")+" "+correc+").png"
+		s=output_direc+base_s.replace(".", "_")+".png"
 		#s=output_direc+fname_s+"_normalized.png"
 
 
@@ -110,16 +144,20 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 		if file_no==0:
 			print "Target Color Basis Matrix:"
 			print Wi
+			print "Target Color Basis Matrix Size:"
+			print Wi.shape
+			
 			Wi_target=np.transpose(Wi)
 			tar_i0=i0
 			print "Target Image Background white intensity:",i0
 		else:
 			print "Source Color Basis Matrix:"
 			print Wi
+			
 			print "Source Image Background white intensity:",i0
 
 		_max=2000
-		
+		#raise valueError()
 		print
 		if (xdim*ydim)<=(_max*_max):
 			print "Small image processing..."
@@ -150,7 +188,7 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 			display_separator()
 
 		else:
-			_maxtf=3000
+			_maxtf=2550#changed from initial 3000
 			x_max=xdim
 			y_max=min(max(int(_maxtf*_maxtf/x_max),1),ydim)
 			print "Large image processing..."
@@ -246,9 +284,11 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 			print "\t \t \t \t Time since processing started:",round(time.time()-tic,3)
 
 			p = time.time()-tic
-			s=output_direc+base_s.replace(".", "_")+" (using "+base_t.replace(".", "_")+" "+correc+").png"
+			s = output_direc+base_s.replace(".", "_")+" (using "+base_t.replace(".", "_")+" "+correc+").tif"
 			print "Saving normalized image..."
-			cv2.imwrite(s,cv2.cvtColor(sourcenorm, cv2.COLOR_RGB2BGR))
+			#cv2.imwrite(s,cv2.cvtColor(sourcenorm, cv2.COLOR_RGB2BGR))
+			pyimg = numpy2vips(sourcenorm)
+			pyimg.tiffsave(s, tile=True, compression='jpeg', bigtiff=True,pyramid=True,Q=85)
 			del sourcenorm
 			print "File written to:",s
 			print "\t \t \t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3)
