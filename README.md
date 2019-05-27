@@ -5,7 +5,7 @@ This repository hosts python codes for Fast GPU-Enabled Color Normalization of W
 
 Please cite both papers if you use this code: 
 
-@article{ramakrishnan_fast_2019,
+	@article{ramakrishnan_fast_2019,
 
 	title = {Fast {GPU}-{Enabled} {Color} {Normalization} for {Digital} {Pathology}},
   
@@ -24,10 +24,10 @@ Please cite both papers if you use this code:
 	note = {arXiv: 1901.03088},
   
 	keywords = {Computer Science - Computer Vision and Pattern Recognition}
-}
+	}
 
 
-@inproceedings{Vahadane2015ISBI,
+	@inproceedings{Vahadane2015ISBI,
 
 	Author = {Abhishek Vahadane and Tingying Peng and Shadi Albarqouni and Maximilian Baust and Katja Steiger and Anna Melissa Schlitter and Amit Sethi and Irene Esposito and Nassir Navab},
   
