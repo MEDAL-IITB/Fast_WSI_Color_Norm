@@ -37,9 +37,9 @@ def Wfast(img,nstains,lamb,num_patches,patchsize,level,background_correction=Fal
 	I_percentile=90
 
 	if ydim*xdim>max_size:
-		print "Finding patches for W estimation:"
+		print("Finding patches for W estimation:")
 		for j in range(20):
-			#print "Patch Sampling Attempt:",i+1
+			#print("Patch Sampling Attempt:",i+1
 			initBias=int(math.ceil(patchsize/2)+1) 
 			xx=np.array(range(initBias,xdim-initBias,patchsize))
 			yy=np.array(range(initBias,ydim-initBias,patchsize))
@@ -63,20 +63,20 @@ def Wfast(img,nstains,lamb,num_patches,patchsize,level,background_correction=Fal
 				break																																																																																																																																	
 			patchsize=int(patchsize*0.95)
 		valid_inp=np.array(valid_inp)
-		print "Number of patches sampled for W estimation:", len(valid_inp)
+		print("Number of patches sampled for W estimation:", len(valid_inp))
 	else:
 		patch=np.asarray(img.read_region((0,0),level,(xdim,ydim)))
 		patch=patch[:,:,:3]
 		valid_inp=[]
 		valid_inp.append(patch)
 		white_pixels= patch[np.sum((patch>white_cutoff),axis=2)==3]
-		print "Image small enough...W estimation done using whole image"
+		print("Image small enough...W estimation done using whole image")
 
 	if background_correction:
-		print "Number of white pixels sampled",len(white_pixels)
+		print("Number of white pixels sampled",len(white_pixels))
 		if len(white_pixels)<min_num_white:
 			i0=np.array([255.0,255.0,255.0])
-			print "Not enough white pixels found, default background intensity assumed"
+			print("Not enough white pixels found, default background intensity assumed")
 		elif len(white_pixels)>0:
 			i0 = np.percentile(white_pixels,I_percentile,axis=0)[:3]
 		else:
@@ -101,7 +101,7 @@ def Wfast(img,nstains,lamb,num_patches,patchsize,level,background_correction=Fal
 		if WS.shape[0]==1:
 			Wsource=WS[0,:3,:]
 		else:
-			print "Median color basis of",len(WS),"patches used as actual color basis"
+			print("Median color basis of",len(WS),"patches used as actual color basis")
 			Wsource=np.zeros((3,nstains))
 			for k in range(nstains):
 			    Wsource[:,k]=[np.median(WS[:,0,k]),np.median(WS[:,1,k]),np.median(WS[:,2,k])]
@@ -110,15 +110,15 @@ def Wfast(img,nstains,lamb,num_patches,patchsize,level,background_correction=Fal
 
 		if Wsource.sum()==0:
 			if patchsize*0.95<100:
-				print "No suitable patches found for learning W. Please relax constraints"
+				print("No suitable patches found for learning W. Please relax constraints")
 				return None			#to prevent infinite recursion
 			else:
-				print "W estimation failed, matrix of all zeros found. Trying again..."				
+				print("W estimation failed, matrix of all zeros found. Trying again...")				
 				return Wfast(img,nstains,lamb,min(100,num_patches*1.5),int(patchsize_original*0.95),level)
 		else:
 			return Wsource,i0
 	else:
-		print "No suitable patches found for learning W. Please relax constraints"
+		print("No suitable patches found for learning W. Please relax constraints")
 		return None,None
 
 def patch_Valid(patch,threshold):
@@ -131,7 +131,7 @@ def patch_Valid(patch,threshold):
 	temp = tempr*tempg*tempb
 	r,c = np.shape((temp)) 
 	prob= float(np.sum(temp))/float((r*c))
-	#print prob
+	#print(prob)
 	if prob>threshold:
 		return False
 	else:
@@ -139,7 +139,7 @@ def patch_Valid(patch,threshold):
 
 def W_sort(W):
 	# All sorting done such that first column is H, second column is E
-	# print W
+	# print(W)
 
 	method = 3
 
@@ -153,7 +153,7 @@ def W_sort(W):
 		# 3. Using r/b ratios of the vectors. H must have a larger value of r/b.
 		r_b_1 = W[0][0]/W[2][0]
 		r_b_2 = W[0][1]/W[2][1]
-		# print r_b_1, r_b_2
+		# print(r_b_1, r_b_2)
 		if r_b_1<r_b_2: #else no need to switch
 			W[:,[0, 1]] = W[:,[1, 0]]
 	elif method==4:
@@ -161,7 +161,7 @@ def W_sort(W):
 		# This is equivalent to comparing the ratios of e^(-r)/e^(-b)
 		r_b_1 = W[0][0]-W[2][0]
 		r_b_2 = W[0][1]-W[2][1]
-		# print r_b_1, r_b_2
+		# print(r_b_1, r_b_2)
 		if r_b_1<r_b_2: #else no need to switch
 			Wsource[:,[0, 1]] = Wsource[:,[1, 0]]
 

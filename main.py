@@ -63,7 +63,7 @@ if op==0:
 	# filename="./experiment_CN/PrognosisTMABlock2_B_2_5_H&E1.tif"
 	# filename="./Target/TCGA-E2-A14V-01Z-00-DX1.tif"
 	# filename = "./Target/he.png"
-	print filename
+	print(filename)
 	run_stainsep(filename,nstains,lamb)
 
 
@@ -74,17 +74,17 @@ elif op==1:
 		os.makedirs(output_direc)
 	file_type="*"
 	if len(sorted(glob.glob(input_direc+file_type)))==0:
-		print "No source files found"
+		print("No source files found")
 		sys.exit()
 	filenames=sorted(glob.glob(input_direc+file_type))
-	print filenames
+	print(filenames)
 	for filename in filenames:
 		run_stainsep(filename,nstains,lamb,output_direc=output_direc)
 
 
 elif op==2:
 	level=0
-	output_direc="./new_tests/"
+	output_direc='test/'#"./new_tests/"
 	if not os.path.exists(output_direc):
 		os.makedirs(output_direc)
 
@@ -98,11 +98,11 @@ elif op==2:
 	# target_filename="b048.tif"
 
 	if not os.path.exists(source_filename):
-		print "Source file does not exist"
-		sys.exit()
+		# print()
+		sys.exit("Source file does not exist")
 	if not os.path.exists(target_filename):
-		print "Target file does not exist"
-		sys.exit()
+		# print()
+		sys.exit("Target file does not exist")
 	background_correction = True	
 	run_colornorm(source_filename,target_filename,nstains,lamb,output_direc,level,background_correction,config=config)
 
@@ -119,10 +119,10 @@ elif op==3:
 	#file_type="*.svs" #all of these file types from input_direc will be normalized
 	target_filename="../Target/TCGA-E2-A14V-01Z-00-DX1.tif"
 	if not os.path.exists(target_filename):
-		print "Target file does not exist"
+		print("Target file does not exist")
 		sys.exit()
 	if len(sorted(glob.glob(input_direc+file_type)))==0:
-		print "No source files found"
+		print("No source files found")
 		sys.exit()
 	#filename format of normalized images can be changed in run_batch_colornorm
 	filenames=[target_filename]+sorted(glob.glob(input_direc+file_type))
