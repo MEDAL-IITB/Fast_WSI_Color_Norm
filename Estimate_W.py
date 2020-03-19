@@ -97,6 +97,9 @@ def Wfast(img,nstains,lamb,num_patches,patchsize,level,background_correction=Fal
 		suppress_stdout(out)
 
 		WS=np.array(WS)
+		# Ensure stain columns are sorted correct before taking median
+		for i in range(len(WS)):
+			WS[i] = W_sort(WS[i])
 
 		if WS.shape[0]==1:
 			Wsource=WS[0,:3,:]
