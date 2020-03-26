@@ -80,7 +80,7 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 
 
 	file_no=0
-	print "To be normalized:",filenames[1:],"using",filenames[0]
+	print("To be normalized:",filenames[1:],"using",filenames[0]
 	for filename in filenames:
 
 		display_separator()
@@ -101,11 +101,11 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 
 
 		tic=time.time()
-		print
 
+		print()
 		I = openslide.open_slide(filename)
 		if img_level>=I.level_count:
-			print "Level",img_level,"unavailable for image, proceeding with level 0"
+			print("Level",img_level,"unavailable for image, proceeding with level 0")
 			level=0
 		else:
 			level=img_level
@@ -113,10 +113,10 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 		ds=I.level_downsamples[level]
 
 		if file_no==0:
-			print "Target Stain Separation in progress:",filename,str(xdim)+str("x")+str(ydim)
+			print("Target Stain Separation in progress:",filename,str(xdim)+str("x")+str(ydim))
 		else:
-			print "Source Stain Separation in progress:",filename,str(xdim)+str("x")+str(ydim)
-		print "\t \t \t \t \t \t \t \t \t \t Time: 0"
+			print("Source Stain Separation in progress:",filename,str(xdim)+str("x")+str(ydim))
+		print("\t \t \t \t \t \t \t \t \t \t Time: 0")
 
 
 		#parameters for W estimation
@@ -127,40 +127,40 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 
 		Wi,i0 = Wfast(I,nstains,lamb,num_patches,patchsize,level,background_correction)
 		if i0 is None:
-			print "No white background detected"
+			print("No white background detected")
 			i0=i0_default
 
 		if not background_correction:
-			print "Background correction disabled, default background intensity assumed"
+			print("Background correction disabled, default background intensity assumed")
 			i0=i0_default
 
 		if Wi is None:
-			print "Color Basis Matrix Estimation failed...image normalization skipped"
+			print("Color Basis Matrix Estimation failed...image normalization skipped")
 			continue
-		print "W estimated",
-		print "\t \t \t \t \t \t Time since processing started:",round(time.time()-tic,3)
+		print("W estimated"),
+		print("\t \t \t \t \t \t Time since processing started:",round(time.time()-tic,3))
 		Wi=Wi.astype(np.float32)
 
 		if file_no==0:
-			print "Target Color Basis Matrix:"
-			print Wi
-			print "Target Color Basis Matrix Size:"
-			print Wi.shape
+			print("Target Color Basis Matrix:")
+			print(Wi)
+			print("Target Color Basis Matrix Size:")
+			print(Wi.shape)
 			
 			Wi_target=np.transpose(Wi)
 			tar_i0=i0
-			print "Target Image Background white intensity:",i0
+			print("Target Image Background white intensity:",i0)
 		else:
-			print "Source Color Basis Matrix:"
-			print Wi
+			print("Source Color Basis Matrix:")
+			print(Wi)
 			
-			print "Source Image Background white intensity:",i0
+			print("Source Image Background white intensity:",i0)
 
 		_max=2000
 		#raise valueError()
-		print
+		print()
 		if (xdim*ydim)<=(_max*_max):
-			print "Small image processing..."
+			print("Small image processing...")
 			img=np.asarray(I.read_region((0,0),level,(xdim,ydim)),dtype=np.float32)[:,:,:3]
 			
 			Hiv=session1.run(Hiv1,feed_dict={Img1:img, Wis1: Wi,src_i_0:i0})
@@ -173,25 +173,25 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 			if file_no==0:
 				file_no+=1
 				Hta_Rmax = np.copy(H_Rmax)
-				print "Target H calculated",
-				print "\t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3)
+				print("Target H calculated"),
+				print("\t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3))
 				display_separator()
 				continue
 
-			print "Color Normalization in progress..."
+			print("Color Normalization in progress...")
 			
 			norm_fac = np.divide(Hta_Rmax,H_Rmax).astype(np.float32)
 			session1.run(fwrite,feed_dict={shape:np.array(img.shape),Wit1: Wi_target,Hiv2:Hiv,sav_name:s,tar_i_0:tar_i0,normfac:norm_fac})
 
-			print "File written to:",s
-			print "\t \t \t \t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3)
+			print("File written to:"+s)
+			print("\t \t \t \t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3))
 			display_separator()
 
 		else:
 			_maxtf=2550#changed from initial 3000
 			x_max=xdim
 			y_max=min(max(int(_maxtf*_maxtf/x_max),1),ydim)
-			print "Large image processing..."
+			print("Large image processing...")
 			if file_no==0:
 				Hivt=np.memmap('H_target', dtype='float32', mode='w+', shape=(xdim*ydim,2))
 			else:
@@ -199,9 +199,9 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 				sourcenorm=np.memmap('wsi', dtype='uint8', mode='w+', shape=(ydim,xdim,3))
 			x_tl = range(0,xdim,x_max)
 			y_tl = range(0,ydim,y_max)
-			print "WSI divided into",str(len(x_tl))+"x"+str(len(y_tl))
+			print("WSI divided into",str(len(x_tl))+"x"+str(len(y_tl)))
 			count=0
-			print "Patch-wise H calculation in progress..."
+			print("Patch-wise H calculation in progress...")
 			ind=0
 			perc=[]
 			for x in x_tl:
@@ -209,8 +209,8 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 					count+=1
 					xx=min(x_max,xdim-x)
 					yy=min(y_max,ydim-y)
-					print "Processing:",count,"		patch size",str(xx)+"x"+str(yy),
-					print "\t \t Time since processing started:",round(time.time()-tic,3)
+					print("Processing:",count,"		patch size",str(xx)+"x"+str(yy)),
+					print("\t \t Time since processing started:",round(time.time()-tic,3))
 					img=np.asarray(I.read_region((int(ds*x),int(ds*y)),level,(xx,yy)),dtype=np.float32)[:,:,:3]		
 
 					Hiv = session1.run(Hiv1,feed_dict={Img1:img, Wis1: Wi,src_i_0:i0})
@@ -233,23 +233,23 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 						ind+=len(Hiv)
 
 			if file_no==0:
-				print "Target H calculated",
+				print("Target H calculated"),
 				Hta_Rmax = np.percentile(np.array(perc),50,axis=0)
 				file_no+=1
 				del Hivt
-				print "\t \t \t \t \t Time since processing started:",round(time.time()-tic,3)
+				print("\t \t \t \t \t Time since processing started:",round(time.time()-tic,3))
 				ind=0
 				continue
 
-			print "Source H calculated",
-			print "\t \t \t \t \t Time since processing started:",round(time.time()-tic,3)
+			print("Source H calculated"),
+			print("\t \t \t \t \t Time since processing started:",round(time.time()-tic,3))
 			Hso_Rmax = np.percentile(np.array(perc),50,axis=0)
-			print "H Percentile calculated", 
-			print "\t \t \t \t Time since processing started:",round(time.time()-tic,3)
+			print("H Percentile calculated"), 
+			print("\t \t \t \t Time since processing started:",round(time.time()-tic,3))
 
 			_normfac=np.divide(Hta_Rmax,Hso_Rmax).astype(np.float32)
 
-			print "Color Normalization in progress..."
+			print("Color Normalization in progress...")
 			count=0
 			ind=0
 			np_max=1000
@@ -258,7 +258,7 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 			y_max=min(max(int(np_max*np_max/x_max),1),ydim)
 			x_tl = range(0,xdim,x_max)
 			y_tl = range(0,ydim,y_max)
-			print "Patch-wise color normalization in progress..."
+			print("Patch-wise color normalization in progress...")
 			total=len(x_tl)*len(y_tl)
 			
 			prev_progress=0
@@ -277,21 +277,21 @@ def run_batch_colornorm(filenames,nstains,lamb,output_direc,img_level,background
 					ind+=pix
 					percent=5*int(count*20/total) #nearest 5 percent
 					if percent>prev_progress and percent<100:
-						print str(percent)+" percent complete...",
-						print "\t \t \t \t \t Time since processing started:",round(time.time()-tic,3)
+						print(str(percent)+" percent complete..."),
+						print("\t \t \t \t \t Time since processing started:",round(time.time()-tic,3))
 						prev_progress=percent
-			print "Color Normalization complete!",
-			print "\t \t \t \t Time since processing started:",round(time.time()-tic,3)
+			print("Color Normalization complete!"),
+			print("\t \t \t \t Time since processing started:",round(time.time()-tic,3))
 
 			p = time.time()-tic
 			s = output_direc+base_s.replace(".", "_")+" (using "+base_t.replace(".", "_")+" "+correc+").tif"
-			print "Saving normalized image..."
+			print("Saving normalized image...")
 			#cv2.imwrite(s,cv2.cvtColor(sourcenorm, cv2.COLOR_RGB2BGR))
 			pyimg = numpy2vips(sourcenorm)
 			pyimg.tiffsave(s, tile=True, compression='lzw',xres=5000,yres=5000, bigtiff=True,pyramid=True,Q=100)#xres and yres should be controlled to produce finer or coarser tif
 			del sourcenorm
-			print "File written to:",s
-			print "\t \t \t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3)
+			print("File written to:"+s)
+			print("\t \t \t \t \t \t \t \t \t Total Time:",round(time.time()-tic,3))
 			display_separator()
 
 		file_no+=1
@@ -313,5 +313,5 @@ def run_colornorm(source_filename,target_filename,nstains,lamb,output_direc,leve
 
 
 def display_separator():
-	print "________________________________________________________________________________________________"
-	print
+	print("________________________________________________________________________________________________")
+	print()

@@ -12,8 +12,8 @@ from Estimate_W import Wfast
 
 def run_stainsep(filename,nstains,lamb,output_direc="",background_correction=True):
 	
-	print 
-	print "Running stain separation on:",filename
+	print()
+	print("Running stain separation on:",filename)
 
 	level=0
 
@@ -21,12 +21,12 @@ def run_stainsep(filename,nstains,lamb,output_direc="",background_correction=Tru
 	xdim,ydim=I.level_dimensions[level]
 	img=np.asarray(I.read_region((0,0),level,(xdim,ydim)))[:,:,:3]
 
-	print "Fast stain separation is running...."
+	print("Fast stain separation is running....")
 	Wi,Hi,Hiv,stains=Faststainsep(I,img,nstains,lamb,level,background_correction)
 
-	#print "\t \t \t \t \t \t Time taken:",elapsed
+	#print("\t \t \t \t \t \t Time taken:",elapsed
 
-	print "Color Basis Matrix:\n",Wi
+	print("Color Basis Matrix:\n",Wi)
 
 	fname=os.path.splitext(os.path.basename(filename))[0]
 	cv2.imwrite(output_direc+fname+"-0_original.png",cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
@@ -38,7 +38,7 @@ def Faststainsep(I_obj,I,nstains,lamb,level,background_correction):
 	s=I.shape
 	ndimsI = len(s)
 	if ndimsI!=3:
-		print "Input Image I should be 3-dimensional!"
+		print("Input Image I should be 3-dimensional!")
 		sys.exit(0)
 	rows = s[0]
 	cols = s[1]
@@ -51,10 +51,10 @@ def Faststainsep(I_obj,I,nstains,lamb,level,background_correction):
 
 
 	if background_correction:
-		print "Background intensity:",i0
+		print("Background intensity:",i0)
 	else:
 		i0 = np.array([255.,255.,255.])
-		print "Background correction disabled, default background intensity assumed"
+		print("Background correction disabled, default background intensity assumed")
 
 	#Beer-Lambert tranformation
 	V,VforW=BLtrans(I,i0)    #V=WH see in paper      
